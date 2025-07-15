@@ -98,3 +98,38 @@ ax6.set_title("Doanh số: Thực tế vs Dự đoán")
 ax6.grid(True)
 st.pyplot(fig6)
 
+# 4. Lưu mô hình
+joblib.dump(model, "model.pkl")
+# Tải mô hình đã huấn luyện
+model = joblib.load("model.pkl")
+
+with st.form("input_form"):
+    price = st.number_input("💵 Giá sản phẩm (USD)", value=99.99)
+    promo = st.selectbox("🎯 Có khuyến mãi không?", ["yes", "no"])
+    position = st.selectbox("📍 Vị trí sản phẩm", ["Aisle", "End-cap", "Feature"])
+    seasonal = st.selectbox("🌦 Có phải sản phẩm theo mùa không?", ["yes", "no"])
+    section = st.selectbox("🧍 Mục sản phẩm", ["MAN", "WOMAN"])
+    price_cat = st.selectbox("💰 Phân loại mức giá", ["low", "medium", "high"])
+    month = st.slider("📆 Tháng thu thập dữ liệu", 1, 12, 2)
+    dow = st.slider("📅 Thứ trong tuần (0=Thứ 2)", 0, 6, 1)
+    submit = st.form_submit_button("Dự đoán")
+
+if submit:
+    input_data = {
+        'price': price,
+        'scrape_month': month,
+        'scrape_dayofweek': dow,
+        'Promotion_yes': 1 if promo == 'yes' else 0,
+        'Product Position_End-cap': 1 if position == 'End-cap' else 0,
+        'Product Position_Feature': 1 if position == 'Feature' else 0,
+        'Seasonal_yes': 1 if seasonal == 'yes' else 0,
+        'section_WOMAN': 1 if section == 'WOMAN' else 0,
+        'price_category_low': 1 if price_cat == 'low' else 0,
+        'price_category_medium': 1 if price_cat == 'medium' else 0,
+    }
+
+    X_input = pd.DataFrame([input_data])
+    y_pred_log = model.predict(X_input)
+    y_pred = np.expm1(y_pred_log)
+
+    st.success(f"✅ Dự đoán doanh số: **{int(y_pred[0]):,} sản phẩm**")
