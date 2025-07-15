@@ -10,7 +10,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # --- 2. Tải và xử lý dữ liệu ---
-df = pd.read_csv("zara.csv", delimiter=';')
+df = pd.read_csv("https://raw.githubusercontent.com/nguyenvudev20/zaraforcasting/refs/heads/main/zara.csv", delimiter=';')
 
 # Tiền xử lý
 df = df.dropna(subset=['name', 'description'])
