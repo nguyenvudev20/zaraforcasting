@@ -33,25 +33,21 @@ st.dataframe(df.head())
 # 2. Trực quan hóa dữ liệu
 st.subheader("2. Trực quan hóa dữ liệu")
 
-# Phân phối giá
 fig1, ax1 = plt.subplots()
 sns.histplot(df['price'], bins=20, kde=True, ax=ax1)
 ax1.set_title("Phân phối giá sản phẩm")
 st.pyplot(fig1)
 
-# Sản phẩm khuyến mãi
 fig2, ax2 = plt.subplots()
 df['Promotion'].value_counts().plot(kind='bar', ax=ax2)
 ax2.set_title("Sản phẩm có/không khuyến mãi")
 st.pyplot(fig2)
 
-# Doanh số theo mức giá
 fig3, ax3 = plt.subplots()
 df.groupby('price_category')['Sales Volume'].mean().plot(kind='bar', color='orange', ax=ax3)
 ax3.set_title("Doanh số trung bình theo mức giá")
 st.pyplot(fig3)
 
-# Sản phẩm theo ngày thu thập
 fig4, ax4 = plt.subplots()
 df['scraped_at'].dt.date.value_counts().sort_index().plot(marker='o', ax=ax4)
 ax4.set_title("Sản phẩm theo ngày thu thập")
@@ -59,7 +55,6 @@ ax4.set_xlabel("Ngày")
 ax4.set_ylabel("Số lượng")
 st.pyplot(fig4)
 
-# Heatmap
 fig5, ax5 = plt.subplots(figsize=(10, 6))
 sns.heatmap(df.select_dtypes(include=[np.number]).corr(), annot=True, cmap="coolwarm", ax=ax5)
 ax5.set_title("Ma trận tương quan đặc trưng số")
@@ -88,7 +83,6 @@ r2 = r2_score(y_true, y_pred)
 st.write(f"📉 **Mean Squared Error (MSE):** `{mse:,.2f}`")
 st.write(f"📈 **R-squared Score (R²):** `{r2:.4f}`")
 
-# Biểu đồ thực tế vs dự đoán
 fig6, ax6 = plt.subplots()
 ax6.scatter(y_true, y_pred, alpha=0.6)
 ax6.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], '--r')
@@ -100,7 +94,10 @@ st.pyplot(fig6)
 
 # 4. Lưu mô hình
 joblib.dump(model, "model.pkl")
-# Tải mô hình đã huấn luyện
+
+# 5. Giao diện dự báo
+st.subheader("4. Dự đoán doanh số sản phẩm mới")
+
 model = joblib.load("model.pkl")
 
 with st.form("input_form"):
